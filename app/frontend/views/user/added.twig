@@ -1,0 +1,5 @@
+<label for="address">{#Адрес доставки#}{{ this.params.delivery_address }}:</label>
+
+    <input type="text" name="address" class="address js-none-{{ address.id }} js-change-{{ address.id }}"  placeholder="адрес доставки" value="{{ address.address }}">
+    <button class="btn_address js-none-{{ address.id }} js-change-address" data-id="{{ address.id }}">{{ this.params.change }}</button>
+    <a data-id="{{ address.id }}" class="js-none-{{ address.id }} js-delete-address">{{ this.params.delete }}</a><span class="js-success-change-{{ address.id }}"></span><br>
