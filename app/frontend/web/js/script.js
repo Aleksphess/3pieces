@@ -14,6 +14,8 @@ $(document).ready(function(){
                 console.log(response);
                 $('.js-backet-price').text(response.cost);
                 $('.js-backet-count').text(response.cart_count);
+                $('body,html').animate({scrollTop:0},2000);
+              /*  $('#modal_success').modal('toggle');*/
             },
             error: function (jqXhr) {
                 console.log("Ошибка: " + jqXhr.statusText + " (" + jqXhr.readyState + ", " + jqXhr.status + ", " + jqXhr.responseText + ")");
@@ -31,11 +33,11 @@ $(document).ready(function(){
                 if(data=='success')
                 {
                     $('#sign-up').trigger("reset");
-                    $('.js-registration-answer').text('Вы успешно зарегестрированы');
+                    $('.js-registration-answer').text('Вы успешно зарегестрированы, вам на почту выслано сообщение с подтверждением');
                 }
                 else
                 {
-                    $('.js-answer-status').text(data);
+                    $('.js-registration-answer').text(data);
                 }
 
             },
@@ -76,7 +78,9 @@ $(document).ready(function(){
             success: function (data) {
                 if(data=='success')
                 {
-                    $('.js-success').text(data);
+                    $('.js-successs').text(data);
+                    $('#modal_1_success').modal('toggle');
+
                 }
                 else
                 {
@@ -98,8 +102,8 @@ $(document).ready(function(){
             url: '/user/change-password',
             data: {password:password},
             success: function (response) {
-                console.log(response);
-                $('.js-password-change').text('success');
+                $('.js-successs').text(response);
+                $('#modal_1_success').modal('toggle');
 
             },
             error: function (jqXhr) {
@@ -119,6 +123,8 @@ $(document).ready(function(){
             success: function (response) {
 
                 $(response).appendTo('.js-render');
+                $('.js-successs').text('успешно');
+                $('#modal_1_success').modal('toggle');
 
             },
             error: function (jqXhr) {
@@ -139,6 +145,8 @@ $(document).ready(function(){
             success: function (response) {
 
                 $('.js-none-'+id).remove();
+                $('.js-successs').text('удалено');
+                $('#modal_1_success').modal('toggle');
 
             },
             error: function (jqXhr) {
@@ -158,7 +166,9 @@ $(document).ready(function(){
             data: {id:id,address:address},
             success: function (response) {
 
-                $('.js-success-change-'+id).text('change');
+                //$('.js-success-change-'+id).text('change');
+                $('.js-successs').text('Изменено');
+                $('#modal_1_success').modal('toggle');
 
             },
             error: function (jqXhr) {
@@ -261,11 +271,14 @@ $(document).ready(function(){
                 if(data=='success')
                 {
                     $('#js-feedback').trigger("reset");
-                    $('.js-feedback-success').text(data);
+                    $('.js-successs').text('Отзыв оставлен');
+                    $('#modal_1_success').modal('toggle');
+
                 }
                 else
                 {
-                    $('.js-answer-status').text(data);
+                    $('.js-successs').text(data);
+                    $('#modal_1_success').modal('toggle');
                 }
 
             },
@@ -308,7 +321,7 @@ $(document).ready(function(){
             data: {username:username,phone:phone,email:email,address:address,pay_type:pay_type,
                 delivery_type:delivery_type,comment:comment,price:price},
             success: function (response) {
-
+                location.href = response.url;
 
 
             },
@@ -317,6 +330,60 @@ $(document).ready(function(){
             }
 
         })
+    });
+    $("form#js-question").on('submit',function(e){
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/user/save-question',
+            data: $( this ).serialize(),
+            success: function (data) {
+                if(data==true)
+                {
+                    $('#js-question').trigger("reset");
+                    $('.js-successs').text('вопрос успешно отправлен');
+                    $('#modal_1_success').modal('toggle');
+                }
+                else
+                {
+                    $('.js-successs').text('произошла ошибка');
+                    $('#modal_1_success').modal('toggle');
+                }
+
+            },
+            error: function (error) {
+                $('form#callback').find('.bad-msg').fadeIn();
+            }
+        });
+    });
+    $("form#js-callback").on('submit',function(e){
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/forms/callback',
+            data: $( this ).serialize(),
+            success: function (data) {
+                if(data==true)
+                {
+                    $('#js-callback').trigger("reset");
+                    $('.js-successs').text('вопрос успешно отправлен');
+                    $('#myModal').fadeOut();
+                    $('.modal-backdrop').fadeOut();
+                    $('#modal_1_success').modal('toggle');
+
+
+                }
+                else
+                {
+                    $('.js-successs').text(data);
+                    $('#modal_1_success').modal('toggle');
+                }
+
+            },
+            error: function (error) {
+                $('form#callback').find('.bad-msg').fadeIn();
+            }
+        });
     });
 
 });

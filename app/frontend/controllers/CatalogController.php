@@ -44,10 +44,7 @@ class CatalogController extends \common\components\BaseController
         $this->enableCsrfValidation = false;
         return parent::beforeAction($action);
     }
-    public function actionIndex()
-    {
-        return $this->render('index');
-    }
+
     
     public function actionCategory ($alias)
     {
@@ -67,10 +64,10 @@ class CatalogController extends \common\components\BaseController
             :CatalogProducts::find()->joinWith('info','params');
 
         $query_count=$query->count();
-        $pages = new Pagination(['totalCount' =>$query_count , 'pageSize' => 3]);
+        $pages = new Pagination(['totalCount' =>$query_count , 'pageSize' => 9]);
         $products=$query->offset($pages->offset)->limit($pages->limit)->orderBy('sort asc')->all();
         $categories = CatalogCategories::find()->active()->joinWith('info')->all();
-           SeoComponent::setByTemplate('default', [
+        SeoComponent::setByTemplate('category', [
             'name' => (empty($category->info->title)) ? 'Все меню' : $category->info->title ,
         ]);
         if (empty($products))
@@ -97,13 +94,18 @@ class CatalogController extends \common\components\BaseController
 
 
 
-        $product = CatalogProducts::find()->where(['category_id'=>$category->id])->byAlias($name_alt)->joinWith('info','params')
-            ->joinWith('consist')->limit(1)->one();
-        $current_products = CatalogProducts::find()->where(['id'=>explode(',',$product->also_ids)])->all();
-
-
+        $product = CatalogProducts::find()
+            ->where(['category_id'=>$category->id])
+            ->byAlias($name_alt)
+            ->joinWith('info','params')
+            ->joinWith('consist')
+            ->limit(1)
+            ->one();
+        $current_products = CatalogProducts::find()
+            ->where(['id'=>explode(',',$product->also_ids)])
+            ->all();
         $categories = CatalogCategories::find()->active()->joinWith('info')->all();
-        SeoComponent::setByTemplate('default', [
+        SeoComponent::setByTemplate('product', [
             'name' => $product->info->title,
         ]);
         if (empty($product))

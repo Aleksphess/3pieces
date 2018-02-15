@@ -6,6 +6,7 @@ use common\components\BaseController;
 use common\models\CatalogParams;
 use common\models\Orders;
 use common\models\OrdersItems;
+use common\components\SeoComponent;
 use yii\helpers\Url;
 use yii\filters\VerbFilter;
 use yii\web\BadRequestHttpException;
@@ -185,9 +186,9 @@ class CartController extends BaseController
             'content' => 'NOINDEX,NOFOLLOW'
         ]);
 
-        $breadcrumbs   = [];
-        $breadcrumbs[] = ['label' => "<span itemprop=\"title\">Корзина</span>",
-            'url' => '', 'itemprop' => 'url'];
+        SeoComponent::setByTemplate('backet', [
+            'name' => Yii::$app->params->view['backet'],
+        ]);
 
         if($session->isActive && $session->has('cart') && !empty($session['cart']))
         {
@@ -200,7 +201,7 @@ class CartController extends BaseController
             {
                 // пришлось пойти на такое извращение
                 // т.к. при использовании asArray() геттер не сработал
-                //asArray() привращает объект масив и геттеры не работают
+                // asArray() привращает объект масив и геттеры не работают
 
                 $params                = CatalogParams::find()->byId($item_id)->asArray()->one();
                 $params_obj            = CatalogParams::find()->byId($item_id)->one();
@@ -221,13 +222,13 @@ class CartController extends BaseController
                 'params'      => $params_all,
 
                 'sum'           => $sum,
-                'breadcrumbs'   => $breadcrumbs,
+
             ]);
 
         } else
         {
             return $this->render('empty_cart.twig', [
-                'breadcrumbs' => $breadcrumbs,
+
             ]);
         }
 
@@ -242,9 +243,9 @@ class CartController extends BaseController
             'content' => 'NOINDEX,NOFOLLOW'
         ]);
 
-        $breadcrumbs   = [];
-        $breadcrumbs[] = ['label' => "<span itemprop=\"title\">Корзина</span>",
-            'url' => '', 'itemprop' => 'url'];
+        SeoComponent::setByTemplate('backet', [
+            'name' => Yii::$app->params->view['order'],
+        ]);
 
         if($session->isActive && $session->has('cart') && !empty($session['cart'])) {
             $cart = $session['cart'];
@@ -272,9 +273,12 @@ class CartController extends BaseController
 
             return $this->render('order.twig', [
                 'params' => $params_all,
-
                 'sum' => $sum,
-                'breadcrumbs' => $breadcrumbs,
+
+            ]);
+        } else
+        {
+            return $this->render('empty_cart.twig', [
             ]);
         }
     }
@@ -324,8 +328,13 @@ class CartController extends BaseController
 
                     $session['cart'] = [];
 
+                        $headers  = "Content-type: text/html; charset=UTF-8 \r\n";
+                        $headers .= "From:3pies.ua \r\n";
+                        mail('aleksphesspro@gmail.com','Новый заказ на 3pies.ua','У вас появился новый заказ на сайте', $headers);
+
+
                     $answer['status'] = true;
-                    $answer['url'] = \yii\helpers\Url::to('/');
+                    $answer['url'] = \yii\helpers\Url::to('/success');
                     $answer['msg'] = 'All ok';
 
                 }
@@ -344,7 +353,7 @@ class CartController extends BaseController
                 $answer['url'] = '';
                 $answer['msg'] = $order->getErrors();
             }
-            return json_encode($answer);
+            return $answer;
         }
         else
         {
@@ -357,10 +366,10 @@ class CartController extends BaseController
         $_SESSION['cart'] = [];
         return Url::toRoute('/category');
     }
-    public function actionSuccess($order_id)
+    public function actionSuccess()
     {
         return $this->render('success.twig', [
-            'order_id' => $order_id
+
         ]);
     }
 

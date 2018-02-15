@@ -55,8 +55,33 @@ return [
             'enableStrictParsing' => false,
             'rules' => [
                 [
+                    'pattern'   => 'success',
+                    'route'     => 'cart/success',
+                    'suffix'    =>  '',
+                ],
+                [
+                    'pattern'   => 'forms/callback',
+                    'route'     => 'forms/callback',
+                    'suffix'    =>  '',
+                ],
+                [
+                    'pattern'   => 'user/save-question',
+                    'route'     => 'user/save-question',
+                    'suffix'    =>  '',
+                ],
+                [
+                    'pattern'   => 'user/question',
+                    'route'     => 'user/question',
+                    'suffix'    =>  '',
+                ],
+                [
                     'pattern'   => 'user/index',
                     'route'     => 'user/index',
+                    'suffix'    =>'',
+                ],
+                [
+                    'pattern'   => 'user/orders',
+                    'route'     => 'user/orders',
                     'suffix'    =>'',
                 ],
                 [

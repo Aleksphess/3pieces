@@ -2,7 +2,7 @@
 <section class="basket_page">
     <div class="container">
         <div class="head_section">
-            Корзина
+            {#Корзина#}{{ this.params.baccket }}
         </div>
 
 
@@ -19,6 +19,7 @@
                     </ul>
                 </div>
                 <div class="content_basket">
+                    <div class="content_personal_account">
                 {% for param in params %}
 
                 <div class="item_basket js-remove-from-backet-{{ param.id }}">
@@ -46,6 +47,7 @@
                 </div>
                 {% endfor %}
                     </div>
+                    </div>
             </div>
 
         </div>
@@ -53,19 +55,19 @@
 
             <div class="right_group">
                 <div class="price_all">
-                    <span class="title">Итого:</span>
+                    <span class="title">{#Итого#}{{ this.params.itogo }}:</span>
                     <span class="value">
                         <span class="js-backet-price">{{ this.params.cost }}</span>
                         <span>грн</span></li>
                     </span>
                 </div>
 
-                <a href="" class="btn_checkout">Оформить заказ</a>
+                <a href="{{ Url.toRoute('/order') }}" class="btn_checkout">{#Оформить заказ#}{{ this.params.give_order }}</a>
 
             </div>
             <div class="left_group">
-                <a href="" class="continue_pay">Продолжить покупки</a>
-                <a href="" class="delete_all js-clear">Очистить</a>
+                <a href="{{ Url.toRoute('/category') }}" class="continue_pay">{#Продолжить покупки#}{{ this.params.go_to_shop }}</a>
+                <a href="" class="delete_all js-clear">{#Очистить#}{{ this.params.clear }}</a>
             </div>
         </div>
 

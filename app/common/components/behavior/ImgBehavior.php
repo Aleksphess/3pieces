@@ -137,7 +137,8 @@ class ImgBehavior extends \yii\base\Behavior {
         }
         else
         {
-            return '/images/no-img.png';
+
+            return ($table_name=='catalog_consist')  ? '/images/not_found.png' : '/images/no-img.png';
         }   
     }
 }

@@ -11,17 +11,17 @@
 
                     <li class="item">
                         <div class="icon"><i class="fas fa-list"></i></div>
-                        <a href="" class="link">{#История заказов#}{{ this.params.history_orders }}</a>
+                        <a href="{{ Url.toRoute('/user/orders') }}" class="link">{#История заказов#}{{ this.params.history_orders }}</a>
                     </li>
 
                     <li class="item">
                         <div class="icon"><i class="fas fa-question-circle"></i></div>
-                        <a href="" class="link">{#Задать вопрос#}{{ this.params.question }}</a>
+                        <a href="{{ Url.toRoute('/user/question') }}" class="link">{#Задать вопрос#}{{ this.params.question }}</a>
                     </li>
                 </ul>
             </div>
             <div class="content_personal_account">
-                <div class="head">Добро пожаловать, <span>{{ app.user.identity.username }}</span></div>
+                <div class="head">{#Добро пожаловать#}{{ this.params.welcome }}, <span>{{ app.user.identity.username }}</span></div>
                 <div class="form_box">
                     <form action="" id="change-settings" class="form_order">
                         <div class="row">
@@ -58,8 +58,9 @@
                                 <label for="address">{#Адрес доставки#}{{ this.params.delivery_address }}:</label>
                                 {% for address in app.user.identity.address %}
                                 <input type="text" name="address" class="address js-none-{{ address.id }} js-change-{{ address.id }}"  placeholder="адрес доставки" value="{{ address.address }}">
-                                <button class="btn_address js-none-{{ address.id }} js-change-address" data-id="{{ address.id }}">{{ this.params.change }}</button>
-                                    <a data-id="{{ address.id }}" class="js-none-{{ address.id }} js-delete-address">{{ this.params.delete }}</a><span class="js-success-change-{{ address.id }}"></span><br>
+                                    <button data-id="{{ address.id }}" class=" btn_address_delete js-none-{{ address.id }} js-delete-address">×</button><span class="js-success-change-{{ address.id }}"></span>{#<br>#}
+
+                                    <button class="btn_address js-none-{{ address.id }} js-change-address" data-id="{{ address.id }}">{{ this.params.change }}</button>
                                 {% endfor %}
                                 <div class="js-render"></div>
                             </div>
@@ -67,7 +68,7 @@
 
 
                             <div class="col-md-12">
-                                <label for="address">{{ this.params.delivery_address }}</label>
+                                <label for="address">{#Добавить#}{{ this.params.addd }} {{ this.params.delivery_address }}</label>
                                 <input type="text" name="address" class="address" id="address" placeholder="адрес доставки">
                                 <button class="btn_address js-delivery-add">{#Добавить#}{{ this.params.added }}</button>
                                 <span class="js-delivery-add-success"></span>
@@ -83,7 +84,7 @@
                             </div>
 
                             <div class="col-sm-12 col-md-12">
-                                <button type="submit" class="btn_save_changes"{#Сохранить изменения#}{{ this.params.save_chamges }}</button>
+                                <button type="submit" class="btn_save_changes"{#Сохранить изменения#}{{ this.params.save_changes }}</button>
                                 <span class="js-success" ></span>
                             </div>
 

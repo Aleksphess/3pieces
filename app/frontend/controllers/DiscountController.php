@@ -41,7 +41,7 @@ class DiscountController extends \common\components\BaseController
     public function actionIndex()
     {
         SeoComponent::setByTemplate('default', [
-            'name' => 'Контакты',
+            'name' => 'Акции',
         ]);
         $discounts = Discounts::find()->active()->joinWith('info')->all();
 

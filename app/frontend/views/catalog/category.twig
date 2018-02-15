@@ -17,7 +17,7 @@
                 <span> / </span>
             </li>
             <li class="item">
-                <a href="{{ category.url }}" class="link">{{ category.info.title }}</a>
+                <a {#href="{{ category.url }}"#} class="link">{{ category.info.title }}</a>
             </li>
             {% endif %}
 
@@ -63,7 +63,7 @@
                     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4 is__padding_0">
                         <div class="cart_goods_small">
                             <div class="name_cart"><a href="{{ product.url }}">{{ product.info.title }}</a></div>
-                            <div class="img_cart" style="background-image: url('{{ product.bimg }}')"></div>
+                            <a href="{{ product.url }}"><div class="img_cart" style="background-image: url('{{ product.bimg }}')"></div></a>
                             <ul class="size_goods js-category-{{ product.id }}">
                                 {% for params in product.params %}
                                     <li data-price="{{  params.price }}" data-id="{{ params.id  }}" class="item {% if loop.first %}active{% endif %}">

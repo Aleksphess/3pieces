@@ -89,7 +89,7 @@ class AuthController extends \common\components\BaseController
         $model->setAttributes($post);
         if ($model->login()) {
 
-           return ['answer'=>'success','url'=>Url::toRoute('/user/index')];
+           return ['answer'=>'success','url'=>Yii::$app->request->referrer];
         } else {
             foreach ($model->errors as $error)
             {
@@ -103,14 +103,18 @@ class AuthController extends \common\components\BaseController
 
     public function actionSignUp()
     {
-      //  var_dump(111);die();
+
 
         $request = Yii::$app->request;
 
         $model = new SignupForm();
 
 		$model->setAttributes($request->post(),false);
-
+		$post = $request->post();
+        if($post['password']!=$post['password_repick'])
+        {
+            return 'Пароли не совпадают';
+        }
 
         if ($model->validate()) {
 
@@ -119,7 +123,7 @@ class AuthController extends \common\components\BaseController
             if (!is_null($user)) {
                     $headers  = "Content-type: text/html; charset=UTF-8 \r\n";
                     $headers .= "From:3pies.ua \r\n";
-                    mail($request->post()['email'],'Регистрация на 3pies.ua','Перейдите по ссылке для активации профиля test3.digitalforce.ua/auth/'.$user->getAuthKey(), $headers);
+                    mail($request->post()['email'],'Регистрация на 3pies.ua','Перейдите по ссылке для активации профиля '.$_SERVER['SERVER_NAME'].'/auth/'.$user->getAuthKey(), $headers);
                     mail('aleksphespro@gmail.com','Регистрация на 3pies.ua','У вас появился новый пользователь'.$request->post()['username'], $headers);
                     return 'success';
             }

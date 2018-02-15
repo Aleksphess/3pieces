@@ -2,7 +2,6 @@
 
 namespace common\models;
 
-use common\models\User\User;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\helpers\Url;
@@ -140,5 +139,9 @@ class Orders extends ActiveRecord
         }
 
         return $products;
+    }
+    public function getItems()
+    {
+        return $this->hasMany(OrdersItems::className(), ['order_id' => 'id']);
     }
 }

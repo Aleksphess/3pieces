@@ -40,7 +40,7 @@
                 <!-- phones -->
                 <div class="header__call_back">
                     <span class="phone_number">{{ this.params.phone_header|raw }}
-                    <a href="" class="btn_call_back" data-toggle="modal" data-target="#modal_success">{{ this.params.callme }}</a>
+                    <a href="" class="btn_call_back" data-toggle="modal" data-target="#myModal">{{ this.params.callme }}</a>
                     <div class="time_job">
                         <img src="/img/header/clock.png" alt="">
                         {#ежедневно - с 9:00 до 22:00#}{{ this.params.timework }}</div>
@@ -59,7 +59,7 @@
                     {% if app.user.isGuest %}
                     <span class=""><span  data-toggle="modal" data-target="#myModal_2" >{#Войти#}{{ this.params.login }}</span>/<span data-toggle="modal" data-target="#myModal_1" >{#Регистрация#}{{ this.params.registration }}</span></span>
                     {% else %}
-                    <span class=""><a href="{{ Url.toRoute('/user/index') }}">{#Профиль#}{{ this.params.profile }}</a></span>
+                        <span class=""><a href="{{ Url.toRoute('/user/index') }}">{#Профиль#}{{ this.params.profile }}</a>/<a href="{{ Url.toRoute('/logout') }}" >{#Регистрация#}{#Выйти#}{{ this.params.exit }}</a></a></span>
                     {% endif %}
                 </div>
 
@@ -132,12 +132,22 @@
                     {% endfor %}
                 </ul>
             </li>
+         </span>
+
+
+
             <li class="b-mobile-nav__item">
-                <a href="" class="b-mobile-nav__link" data-modal="login">{#Личный кабинет#}{{ this.params.prodile }}</a>
+                {% if app.user.isGuest %}
+                <a class="b-mobile-nav__link" href="{{ Url.toRoute('/login') }}" data-toggle="modal" data-target="#myModal_2" >{#Личный кабинет#}{{ this.params.profile }}</a> <a href="{{ Url.toRoute('/logup') }}" class="b-mobile-nav__link" data-toggle="modal" data-target="#myModal_1" >{#Регистрация#}{{ this.params.registration }}</a>
+                {% else %}
+                    <a class="b-mobile-nav__link" href="{{ Url.toRoute('/user/index') }}">{#Профиль#}{{ this.params.login }}</a><a  class="b-mobile-nav__link" href="{{ Url.toRoute('/logout') }}" >{#Регистрация#}{{ this.params.exit }}</a>
+                {% endif %}
             </li>
         </ul>
 
+{#
         {{ catalog_widget({'bottom':false}) }}
+#}
     </div>
 </div>
 <!-- /HEADER -->
@@ -226,18 +236,35 @@
     </div>
 </footer>
 <!-- /FOOTER -->
-<div id="modal_success" class="modal fade">
+<div id="modal_1_success"  style="z-index: 1000000;" class="modal fade myModal_ok">
     <div class="modal-dialog">
         <div class="modal-content">
-
+            <div class="modal-header">
+                <button class="close" type="button" data-dismiss="modal">×</button>
+                <span class="js-successs"></span>
+            </div>
             <div class="modal-body">
-                <form id="fast_registration1" class="call_back">
+
+                <button  class="btn_ok" data-dismiss="modal">ok</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div id="modal_success"  class="modal fade myModal_link">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" type="button" data-dismiss="modal">×</button>
+                Товар добавлен
+            </div>
+            <div class="modal-body">
 
 
 
-                    <button type="submit" disabled class="btn_send">Успешно</button>
 
-                </form>
+                    <a href="{{ Url.toRoute('/backet') }}" class="btn_link">Перейти в корзину</a>
+
             </div>
 
 
@@ -249,17 +276,17 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button class="close" type="button" data-dismiss="modal">×</button>
-                Обратный звонок
+                {#Обратный звонок#}{{ this.params.callback }}
             </div>
 
             <div class="modal-body">
-                <form id="fast_registration" class="call_back">
+                <form id="js-callback" class="call_back">
 
-                    <input type="text" id="name_callback" class="name_callback" required placeholder="Ваше имя"/>
+                    <input type="text" id="name_callback" name="name" class="name_callback" required placeholder="{{ this.params.your_name }}"/>
 
-                    <input type="text" id="phone_callback" class="phone_callback" required placeholder="Ваш номер телефона"/>
+                    <input type="text" id="phone_callback" name="phone" class="phone_callback" required placeholder="{{ this.params.phone }}"/>
 
-                    <button type="submit" class="btn_send">Отправить</button>
+                    <button type="submit" class="btn_send">{{ this.params.send }}</button>
 
                 </form>
             </div>
@@ -274,23 +301,24 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button class="close" type="button" data-dismiss="modal">×</button>
-                Регистрация
+                {{ this.params.registration }}
             </div>
 
             <div class="modal-body">
                 <form id="sign-up" class="call_back">
 
-                    <input type="text" id="asdas" class="name_callback" required placeholder="Ваше имя"/>
+                    <input type="text" id="username" class="name_callback" name="username" required placeholder="{{ this.params.your_name }}"/>
 
-                    <input type="text" id="12312" class="phone_callback" required placeholder="Ваш номер телефона"/>
+                    <input type="text" id="phone" class="phone_callback" name="phone" required placeholder="{{ this.params.phone }}"/>
 
-                    <input type="text" id="asdasd" class="email_callback" required placeholder="Ваш e-mail"/>
+                    <input type="text" id="email" class="email_callback" name="email" required placeholder="e-mail"/>
 
-                    <input type="password" id="3dsa" class="password_callback" required  placeholder="Придумайте пароль"/>
+                    <input type="password" id="password" class="password_callback" name="password" required  placeholder="{{ this.params.password }}"/>
 
-                    <input type="password" id="afs" class="password_callback" required placeholder="Повторите пароль"/>
+                    <input type="password" id="password_repick" class="password_callback" name="password_repick" required placeholder="{{ this.params.password }}"/>
 
-                    <button type="submit" class="btn_send">Зарегистрироваться</button>
+                    <button type="submit" class="btn_send">{#Зарегистрироваться#}{{ this.params.registration }}</button>
+                    <span class="js-registration-answer"></span>
 
                 </form>
             </div>
@@ -305,18 +333,18 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button class="close" type="button" data-dismiss="modal">×</button>
-                Авторизация
+                {{ this.params.login }}
             </div>
 
             <div class="modal-body">
                 <form id="sign-in" class="call_back">
 
-                    <input type="text" id="email" name="email" class="email_callback" required placeholder="Ваш e-mail"/>
+                    <input type="text"  name="email" class="email_callback" required placeholder=" e-mail"/>
 
-                    <input type="password" id="password" name="password" class="password_callback" required  placeholder="Ваш пароль"/>
+                    <input type="password"  name="password" class="password_callback" required  placeholder="{{ this.params.password }}"/>
 
-                    <button type="submit" class="btn_send">Ввойти</button>
-
+                    <button type="submit" class="btn_send">{{ this.params.login }}</button>
+                    <span class="js-answer-status"></span>
                 </form>
             </div>
 

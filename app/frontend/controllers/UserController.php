@@ -2,9 +2,11 @@
 
 namespace frontend\controllers;
 
+use Symfony\Component\Console\Question\Question;
 use Twig\Node\Expression\Binary\AddBinary;
 use Yii;
 use yii\helpers\Url;
+use yii\web\BadRequestHttpException;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
@@ -14,6 +16,7 @@ use common\models\User;
 use yii\imagine\Image;
 use common\models\Payment;
 use common\models\AddressDelivery;
+
 
 class UserController extends \common\components\BaseController
 {
@@ -26,7 +29,10 @@ class UserController extends \common\components\BaseController
 //                'only'      => ['index'],
                 'rules'     => [
                     [
-                        'actions'   => ['index', 'settings', 'change-settings','payment-static','lot','change-password','add-address','delete-address','change-address'],
+                        'actions'   => ['index', 'settings', 'change-settings','payment-static','lot',
+                            'change-password','add-address','delete-address','change-address','orders','question',
+                            'save-question'
+                        ],
                         'allow'     => true,
                         'roles'     => ['@'],
                     ],
@@ -35,13 +41,17 @@ class UserController extends \common\components\BaseController
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
+                    'save-question'         => ['post'],
                     'index'                 => ['get'],
                     'settings'              => ['get'],
                     'change-settings'       => ['post'],
                     'change-password'       => ['post'],
                     'add-address'           => ['post'],
                     'delete-address'        => ['post'],
-                    'change-address'        => ['post']
+                    'change-address'        => ['post'],
+                    'orders'                => ['get'],
+                    'question'                => ['get'],
+
                 ],
             ],
         ];
@@ -54,6 +64,13 @@ class UserController extends \common\components\BaseController
     
     public function actionIndex()
     {
+        Yii::$app->view->registerMetaTag([
+            'name' => 'robots',
+            'content' => 'NOINDEX,NOFOLLOW'
+        ]);
+        SeoComponent::setByTemplate('user', [
+            'name' => Yii::$app->params->view['profile'],
+        ]);
                 return $this->render('old_index.twig', [
 										   ]);
     }
@@ -63,7 +80,12 @@ class UserController extends \common\components\BaseController
     public function actionChangeSettings()
     {
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        $post = Yii::$app->request->post();
+        $request=Yii::$app->request;
+        if(!$request->isAjax)
+        {
+            throw new BadRequestHttpException();
+        }
+        $post = $request->post();
 
             $current_user = User::findIdentity(Yii::$app->user->identity->id);
             $current_user->username=trim(strip_tags($post['username']));
@@ -83,7 +105,12 @@ class UserController extends \common\components\BaseController
     public function actionChangePassword()
     {
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        $post = Yii::$app->request->post();
+        $request=Yii::$app->request;
+        if(!$request->isAjax)
+        {
+            throw new BadRequestHttpException();
+        }
+        $post = $request->post();
 
         $current_user = User::findIdentity(Yii::$app->user->identity->id);
         $current_user->setPassword($post['password']);
@@ -99,7 +126,12 @@ class UserController extends \common\components\BaseController
     public function actionAddAddress()
     {
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        $post = Yii::$app->request->post();
+        $request=Yii::$app->request;
+        if(!$request->isAjax)
+        {
+            throw new BadRequestHttpException();
+        }
+        $post = $request->post();
         $address = new AddressDelivery();
         $address->user_id = Yii::$app->user->identity->id;
         $address->address = $post['address'];
@@ -117,7 +149,12 @@ class UserController extends \common\components\BaseController
     public function actionChangeAddress()
     {
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        $post = Yii::$app->request->post();
+        $request=Yii::$app->request;
+        if(!$request->isAjax)
+        {
+            throw new BadRequestHttpException();
+        }
+        $post = $request->post();
         $address =  AddressDelivery::find()->where(['id'=>$post['id']])->limit(1)->one();
 
         $address->address = $post['address'];
@@ -133,7 +170,12 @@ class UserController extends \common\components\BaseController
     public function actionDeleteAddress()
     {
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        $post = Yii::$app->request->post();
+        $request=Yii::$app->request;
+        if(!$request->isAjax)
+        {
+            throw new BadRequestHttpException();
+        }
+        $post = $request->post();
         $address = AddressDelivery::find()->where(['id'=>$post['id']])->limit(1)->one();
 
         if( $address->delete())
@@ -146,29 +188,55 @@ class UserController extends \common\components\BaseController
 
     }
 
-    public function actionLot($alias)
+    public function actionOrders()
     {
+        Yii::$app->view->registerMetaTag([
+            'name' => 'robots',
+            'content' => 'NOINDEX,NOFOLLOW'
+        ]);
+        SeoComponent::setByTemplate('user', [
+            'name' => Yii::$app->params->view['user_orders'],
+        ]);
+        $orders = Yii::$app->user->identity->orders;
 
-        $lot = Lots::find()->byAlias($alias, Lots::tableName())->byUser()
-            ->where([Lots::tableName().'.status_id' => Lots::IN_PUBLIC])
-            ->where([Lots::tableName().'.alias' => $alias])
-            ->limit(1)->one();
-        if($lot->owner_id!=Yii::$app->user->identity->id)
-        {
-            throw new NotFoundHttpException('Not Found!', 404);
-
-        }
-        return $this->render('lot.twig',[
-            'lot'   =>  $lot,
+        return $this->render('orders.twig',[
+            'orders'   =>  $orders,
         ]);
     }
-    public function actionLots()
+    public function actionQuestion()
     {
-
-        $lots = Lots::find()->byUser()
-            ->all();
-        return $this->render('lots.twig',[
-            'lots'   =>  $lots,
+        Yii::$app->view->registerMetaTag([
+            'name' => 'robots',
+            'content' => 'NOINDEX,NOFOLLOW'
         ]);
+        SeoComponent::setByTemplate('user', [
+            'name' => Yii::$app->params->view['user_question'],
+        ]);
+
+        return $this->render('question.twig',[
+
+        ]);
+    }
+    public function actionSaveQuestion()
+    {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $request=Yii::$app->request;
+        if(!$request->isAjax)
+        {
+            throw new BadRequestHttpException();
+        }
+        $post = $request->post();
+        $model = new \common\models\Question();
+        $model->name            = isset($post['name']) ? strip_tags($post['name']) : '';
+        $model->phone            = isset($post['phone']) ? strip_tags($post['phone']) : '';
+        $model->question        =isset($post['comment']) ? strip_tags($post['comment']) : '';
+        $model->user_id         = Yii::$app->user->identity->id;
+        $model->creation_time   = date('U');
+        if($model->save())
+        {
+            return true;
+        }
+        return ['status' => false];
     }
 }

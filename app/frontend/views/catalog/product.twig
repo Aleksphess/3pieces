@@ -21,7 +21,7 @@
                 <span> / </span>
             </li>
             <li class="item">
-                <a href="{{ product.url }}" class="link">{{ product.info.title }}</a>
+                <a  class="link">{{ product.info.title }}</a>
             </li>
         </ul>
     </div>
@@ -118,7 +118,7 @@
                                             <span class="count js-count-view-{{ product.id }}">{{ params.price }}</span>
                                         {% endif %}
                                     {% endfor %}
-                                    <span class="txt">грн</span>
+                                    <span class="txt">{{ this.params.grn }}</span>
                                 </div>
 
                                 <div class="b-product__qty">
@@ -178,7 +178,7 @@
                                         </div>
 
                                         <div class="info_block_2">
-                                            <div class="b-product__qty">
+                                            <div style="display: none" class="b-product__qty">
 
                                                 <input type="text" pattern="\d [1-9]" name="" data-id="{{ current_product.id }}" class="js-qty-input js-count-add-{{ current_product.id }}" value="1">
 

@@ -54,9 +54,11 @@ class FormsController extends \common\components\BaseController
         $model                  = new Callback();
         $model->name            = isset($post['name']) ? strip_tags($post['name']) : '';
         $model->phone           = isset($post['phone']) ? strip_tags($post['phone']) : '';
+        $model->user_id         = Yii::$app->user->isGuest ? -1 : Yii::$app->user->identity->id;
+        $model->creation_time   = date('U');
         if($model->save())
         {
-            return 'Успешно';
+            return true;
         } else {
             foreach ($model->errors as $error)
             {
@@ -73,9 +75,12 @@ class FormsController extends \common\components\BaseController
             throw new BadRequestHttpException("Wrong request", 400);
         }
         $post                   = $request->post();
-
+        if(empty(Yii::$app->user->identity->orders)){
+            return 'Вы еще ничего не заказывали';
+        }
         $model                  = new Feedbacks();
         $model->name            = isset($post['name']) ? strip_tags($post['name']) : '';
+        $model->email            = isset($post['email']) ? strip_tags($post['email']) : '';
         $model->mark            = isset($post['mark']) ? strip_tags($post['mark']) : '';
         $model->text            = isset($post['text']) ? strip_tags($post['text']) : '';
         $model->creation_time   = date('U');

@@ -41,11 +41,11 @@ class FeedbacksController extends \common\components\BaseController
     public function actionIndex()
     {
         SeoComponent::setByTemplate('default', [
-            'name' => 'Отзывы',
+            'name' => Yii::$app->params->view['feeedbacks'],
         ]);
         $query = Feedbacks::find()->active();
         $query_count=$query->count();
-        $pages = new Pagination(['totalCount' =>$query_count , 'pageSize' => 3]);
+        $pages = new Pagination(['totalCount' =>$query_count , 'pageSize' => 6]);
         $feedbacks=$query->offset($pages->offset)->limit($pages->limit)->orderBy('sort asc')->all();
 
 

@@ -239,6 +239,10 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return $this->hasMany(AddressDelivery::className(), ['user_id' => 'id']);
     }
+    public function getOrders()
+    {
+        return $this->hasMany(Orders::className(), ['user_id' => 'id']);
+    }
     
     /**
      * Get user locality
